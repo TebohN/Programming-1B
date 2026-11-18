@@ -1,0 +1,101 @@
+public class Product implements IProduct {
+
+    private String[] productNames;
+    private int[][] sales;
+
+    // Constructor
+    public Product(String[] productNames, int[][] sales) {
+
+        if (productNames == null || sales == null) {
+            throw new IllegalArgumentException("Arrays cannot be null.");
+        }
+
+        if (productNames.length != sales.length || productNames.length == 0) {
+            throw new IllegalArgumentException("Invalid product data.");
+        }
+
+        for (int i = 0; i < sales.length; i++) {
+
+            if (sales[i] == null || sales[i].length != 3) {
+                throw new IllegalArgumentException(
+                    "Each product must have sales for three months."
+                );
+            }
+
+            for (int j = 0; j < sales[i].length; j++) {
+                if (sales[i][j] < 0) {
+                    throw new IllegalArgumentException(
+                        "Sales cannot be negative."
+                    );
+                }
+            }
+        }
+
+        this.productNames = productNames.clone();
+
+        this.sales = new int[sales.length][3];
+
+        for (int i = 0; i < sales.length; i++) {
+            this.sales[i] = sales[i].clone();
+        }
+    }
+
+    // Calculate total products sold
+    @Override
+    public int GetTotalProductsSold() {
+
+        int total = 0;
+
+        for (int i = 0; i < sales.length; i++) {
+
+            for (int j = 0; j < sales[i].length; j++) {
+
+                total += sales[i][j];
+            }
+        }
+
+        return total;
+    }
+
+    // Calculate average products sold
+    @Override
+    public double GetAverageProductSold() {
+
+        int total = GetTotalProductsSold();
+
+        int count = 0;
+
+        for (int i = 0; i < sales.length; i++) {
+            count += sales[i].length;
+        }
+
+        return (double) total / count;
+    }
+
+    // Determine the most popular product
+    @Override
+    public String GetMostPopularProduct() {
+
+        int highestSales = -1;
+        String popularProduct = "";
+
+        for (int i = 0; i < sales.length; i++) {
+
+            int productTotal = 0;
+
+            for (int j = 0; j < sales[i].length; j++) {
+
+                productTotal += sales[i][j];
+            }
+
+            if (productTotal > highestSales) {
+
+                highestSales = productTotal;
+
+                popularProduct = productNames[i];
+            }
+        }
+
+        return popularProduct;
+    }
+}
