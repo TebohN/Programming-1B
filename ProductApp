@@ -1,0 +1,131 @@
+
+
+public class ProductApp extends JFrame {
+    private JTextField txtCustomerName;
+    private JComboBox<String> cmbProducts;
+    private JTextField txtPrice;
+    
+    private JMenuItem menuProcess;
+    private JMenuItem menuClear;
+    private JMenuItem menuExit;
+
+    public ProductApp() {
+        setTitle("Product App");
+        setSize(450, 320);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(null);
+
+        // Labels
+        JLabel lblCustomer = new JLabel("Customer Name:");
+        lblCustomer.setBounds(30, 30, 120, 25);
+        add(lblCustomer);
+
+        JLabel lblProduct = new JLabel("Select Product:");
+        lblProduct.setBounds(30, 80, 120, 25);
+        add(lblProduct);
+
+        JLabel lblPrice = new JLabel("Enter Price:");
+        lblPrice.setBounds(30, 130, 120, 25);
+        add(lblPrice);
+
+        // Text Fields & Combo Box
+        txtCustomerName = new JTextField();
+        txtCustomerName.setBounds(160, 30, 230, 25);
+        add(txtCustomerName);
+
+        String[] products = { "Cozy Nights Monarch", "Restonic Barbados", "Sealy Phuket" };
+        cmbProducts = new JComboBox<>(products);
+        cmbProducts.setBounds(160, 80, 230, 25);
+        add(cmbProducts);
+
+        txtPrice = new JTextField();
+        txtPrice.setBounds(160, 130, 230, 25);
+        add(txtPrice);
+
+        // Process Button
+        JButton btnProcess = new JButton("PROCESS");
+        btnProcess.setBounds(160, 180, 230, 30);
+        add(btnProcess);
+
+        // Menu Bar Setup (Q.2.4)
+        JMenuBar menuBar = new JMenuBar();
+        
+        JMenu fileMenu = new JMenu("File");
+        menuExit = new JMenuItem("Exit");
+        fileMenu.add(menuExit);
+        
+        JMenu toolsMenu = new JMenu("Tools");
+        menuProcess = new JMenuItem("Process");
+        menuClear = new JMenuItem("Clear");
+        toolsMenu.add(menuProcess);
+        toolsMenu.add(menuClear);
+
+        menuBar.add(fileMenu);
+        menuBar.add(toolsMenu);
+        setJMenuBar(menuBar);
+
+        // Action Listeners
+        btnProcess.addActionListener(e -> processOrder());
+        menuProcess.addActionListener(e -> processOrder());
+        menuClear.addActionListener(e -> clearFields());
+        menuExit.addActionListener(e -> System.exit(0));
+    }
+
+    private void processOrder() {
+        try {
+            String customerName = txtCustomerName.getText().trim();
+            String productName = (String) cmbProducts.getSelectedItem();
+            
+            if (customerName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter a customer name.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            double price = Double.parseDouble(txtPrice.getText().trim());
+
+            // Use ProductCalculations class
+            ProductCalculations calc = new ProductCalculations(price);
+            double vat = calc.GetVat();
+            double commission = calc.GetCommission();
+            double total = calc.GetTotal();
+
+            // Format message popup output matching sample screenshot
+            String message = String.format("Customer Name: %s\nProduct: %s\nVAT: R %.1f\nCOMMISSION: R %.1f\nTOTAL: R %.1f",
+                    customerName, productName, vat, commission, total);
+
+            JOptionPane.showMessageDialog(this, message, "Message", JOptionPane.INFORMATION_MESSAGE);
+
+            // Save to data.txt file
+            saveToFile(customerName, productName, vat, commission, total);
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid numeric value for price.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void clearFields() {
+        txtCustomerName.setText("");
+        cmbProducts.setSelectedIndex(0);
+        txtPrice.setText("");
+    }
+
+    private void saveToFile(String customer, String product, double vat, double commission, double total) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("data.txt", false))) {
+            writer.println("DATA LOG");
+            writer.println("**************************************************");
+            writer.println("Customer Name: " + customer);
+            writer.println("Product: " + product);
+            writer.printf("VAT: R %.1f\n", vat);
+            writer.printf("COMMISSION: R %.1f\n", commission);
+            writer.printf("TOTAL: R %.1f\n", total);
+            writer.println("**************************************************");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error saving to file: " + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new ProductApp().setVisible(true));
+    }
+}
