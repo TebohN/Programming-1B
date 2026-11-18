@@ -1,0 +1,33 @@
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ProductCalculationsTest {
+
+    @Test
+    public void GetVat_WithValidData_ReturnsCorrectValue() {
+        // Arrange: price = 3500 (matching sample screenshot)
+        ProductCalculations calc = new ProductCalculations(3500.0);
+        
+        // Act: 3500 * 0.15 = 525.0
+        double expectedVat = 525.0;
+        double actualVat = calc.GetVat();
+        
+        // Assert
+        assertEquals(expectedVat, actualVat, 0.001);
+    }
+
+    @Test
+    public void GetTotal_WithValidData_ReturnsCorrectValue() {
+        // Arrange: price = 3500
+        // VAT = 525.0, Commission = 175.0 (3500 * 0.05)
+        // Total = 3500 + 525 + 175 = 4200.0
+        ProductCalculations calc = new ProductCalculations(3500.0);
+        
+        // Act
+        double expectedTotal = 4200.0;
+        double actualTotal = calc.GetTotal();
+        
+        // Assert
+        assertEquals(expectedTotal, actualTotal, 0.001);
+    }
+}
