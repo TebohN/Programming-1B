@@ -1,0 +1,36 @@
+
+
+public class ProductTest {
+
+    String[] productNames = {
+        "Cozy Nights Monarch mattress",
+        "Restonic Barbados mattress",
+        "Sealy Phuket mattress"
+    };
+
+    int[][] monthlySales = {
+        {25, 18, 20},
+        {15, 10, 12},
+        {18, 15, 20}
+    };
+
+    @Test
+    public void GetTotalProductSales_WithValidData_ReturnsCorrectValue() {
+
+        Product product = new Product(productNames, monthlySales);
+
+        int result = product.GetTotalProductsSold();
+
+        assertEquals(153, result);
+    }
+
+    @Test
+    public void GetAverageSales_WithValidData_ReturnsCorrectValue() {
+
+        Product product = new Product(productNames, monthlySales);
+
+        double result = product.GetAverageProductSold();
+
+        assertEquals(17.0, result, 0.001);
+    }
+}
